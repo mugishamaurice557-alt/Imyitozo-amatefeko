@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tera Inkunga | MANiRUMVA PACIFIKE</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;}
+.container{background:rgba(0,0,0,.45);border-radius:15px;padding:25px;max-width:420px;width:100%;text-align:center;}
+h1{font-size:1.6rem;margin-bottom:10px;}p{font-size:.95rem;}
+.wheel-container{margin:25px auto;position:relative;width:240px;height:240px;}
+.wheel{width:100%;height:100%;border-radius:50%;background:conic-gradient(#4caf50 0 90deg,#2196f3 90deg 180deg,#ff9800 180deg 270deg,#e91e63 270deg 360deg);transition:transform 3s cubic-bezier(0.33,1,0.68,1);}
+.pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:20px solid #fff;transform-origin:50% 10px;}
+.center-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:95px;height:95px;background:#fff;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:bold;padding:8px;}
+.code{background:#000;padding:12px;border-radius:8px;font-size:1rem;font-weight:bold;color:#ffeb3b;margin:15px 0;}
+button{width:100%;background:#4caf50;color:#fff;border:none;padding:15px;font-size:1rem;border-radius:8px;cursor:pointer;}
+button:hover{background:#43a047;}
+footer{margin-top:15px;font-size:.75rem;opacity:.8;}
+.wheel-labels{position:absolute;top:50%;left:50%;width:100%;height:100%;transform:translate(-50%,-50%);}
+.wheel-labels span{position:absolute;left:50%;top:50%;transform-origin:0 -90px;font-size:14px;font-weight:bold;color:#fff;text-shadow:1px 1px 2px #000;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Shyigikira MANiRUMVA PACIFIKE</h1>
+<p>Hinduranya spin uhitemo inkunga ushaka gutanga.</p>
+<div class="wheel-container">
+    <div class="pointer" id="pointer"></div>
+    <div class="wheel" id="wheel"></div>
+    <div class="wheel-labels" id="wheelLabels"></div>
+    <div class="center-text" id="resultText">Spin<br>Hitamo<br>Inkunga</div>
+</div>
+<div class="code" id="ussd">*182*1*1*0790889293#</div>
+<button onclick="teraInkunga()">Tera Inkunga Ubu</button>
+<footer>Murakoze kudushyigikira</footer>
+<audio id="tick" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
+
+<script>
+const amounts=[{label:"1000 Frw",value:1000},{label:"2000 Frw",value:2000},{label:"5000 Frw",value:5000},{label:"Up 10000 Frw",value:10000}];
+const labelsContainer=document.getElementById("wheelLabels");
+amounts.forEach((amt,i)=>{let s=document.createElement("span");s.innerText=amt.label;s.style.transform=`rotate(${i*90}deg)`;labelsContainer.appendChild(s);});
+function teraInkunga(){
+    const wheel=document.getElementById("wheel"),resultText=document.getElementById("resultText"),ussd=document.getElementById("ussd"),tick=document.getElementById("tick"),pointer=document.getElementById("pointer");
+    const rand=Math.floor(Math.random()*360),spins=5,rotateDeg=spins*360+rand;
+    wheel.style.transform=`rotate(${rotateDeg}deg)`;
+    let lastTick=0;
+    const start=Date.now(),duration=3000,interval=setInterval(()=>{
+        const elapsed=Date.now()-start;
+        if(elapsed>duration)return clearInterval(interval);
+        if(elapsed-lastTick>150){tick.play();lastTick=elapsed;}
+        pointer.style.transform=`translateX(-50%) rotate(${Math.sin(elapsed/100)*15}deg)`;
+    },50);
+    setTimeout(()=>{
+        clearInterval(interval);pointer.style.transform=`translateX(-50%) rotate(0deg)`;
+        const index=Math.floor((360-(rand%360))/90)%4,sel=amounts[index];
+        resultText.innerHTML=`Wahisemo<br>${sel.label}`;
+        ussd.innerText=`*182*1*1*0790889293*${sel.value}#`;
+        setTimeout(()=>{window.location.href=`tel:*182*1*1*0790889293*${sel.value}#`;},2000);
+    },duration);
+}
+</script>
+</body>
+</html>
